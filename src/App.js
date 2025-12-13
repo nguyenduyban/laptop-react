@@ -43,7 +43,7 @@ import Aboutpage from "./pages/contact.js";
 function App() {
   return (
     <>
-      <GoogleOAuthProvider clientId="70477090360-2ue7k7ro5p3430dqqsgn59sa8spuc8uo.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId="70477090360-1uhuoqr8uoqd7cl7kq49qkpudjum9oco.apps.googleusercontent.com">
         <AuthProvider>
           <Navbar />
           <Routes>
