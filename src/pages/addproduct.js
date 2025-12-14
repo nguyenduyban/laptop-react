@@ -24,6 +24,7 @@ const AddProduct = () => {
   const [form, setForm] = useState({
     tensp: "",
     mota: "",
+    thongso: "",
     giamoi: "",
     giacu: "",
     trangthai: 1,
@@ -83,6 +84,7 @@ const AddProduct = () => {
     const fd = new FormData();
     fd.append("tensp", form.tensp);
     fd.append("mota", form.mota);
+    fd.append("thongso", form.thongso);
     fd.append("giamoi", form.giamoi);
     fd.append("giacu", form.giacu);
     fd.append("trangthai", form.trangthai);
@@ -242,7 +244,20 @@ const AddProduct = () => {
                     placeholder="Nhập mô tả chi tiết..."
                   />
                 </div>
-
+                {/* Thông số */}
+                <div className="col-12">
+                  <label className="form-label fw-semibold">
+                    <FaAlignLeft className="me-1 text-muted" /> Thông số kỹ thuật
+                  </label>
+                  <textarea
+                    className="form-control rounded-3"
+                    name="thongso"
+                    rows="6"
+                    value={form.thongso}
+                    onChange={handleInput}
+                    placeholder="CPU: Intel Core i5-13420H..."
+                  />
+                </div>
                 {/* Ảnh đại diện */}
                 <div className="col-12">
                   <label className="form-label fw-semibold">

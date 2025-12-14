@@ -112,16 +112,15 @@ const ProductDetail = () => {
 
             {/* CAM KẾT */}
             <div className="product-commit-box mt-4">
-              <h5 className="fw-bold mb-3 text-dark">Cam kết sản phẩm</h5>
-
+                {/* THÔNG SỐ KỸ THUẬT */}
+            <ThongSoSection thongso={product.thongso} />
+              <h5 className="fw-bold mb-3 text-dark">Cam kết</h5>
               <div className="row g-3">
                 <div className="col-6">
                   <div className="p-3 rounded-4 bg-light border h-50% shadow-sm">
                     <i className="bi bi-box-seam text-danger fs-4 icon-bg"></i>
                     <p className="mt-2 mb-0 text-secondary">
                       Nguyên hộp, đầy đủ phụ kiện từ nhà sản xuất.
-                      <br />
-                      Bảo hành pin và bộ sạc 12 tháng.
                     </p>
                   </div>
                 </div>
@@ -131,26 +130,6 @@ const ProductDetail = () => {
                     <i className="bi bi-shield-check text-danger fs-4 icon-bg"></i>
                     <p className="mt-2 mb-0 text-secondary">
                       Bảo hành 1 đổi 1 trong 12 tháng bởi Nhà Phân Phối.
-                      <br />
-                      Áp dụng tại FPT Service toàn quốc.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="col-6">
-                  <div className="p-3 rounded-4 bg-light border h-50% shadow-sm">
-                    <i className="bi bi-gear-wide-connected text-danger fs-4 icon-bg"></i>
-                    <p className="mt-2 mb-1 text-secondary">
-                      Bộ nguồn, máy và sách hướng dẫn đầy đủ.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="col-6">
-                  <div className="p-3 rounded-4 bg-light border h-50% shadow-sm">
-                    <i className="bi bi-receipt text-danger fs-4 icon-bg"></i>
-                    <p className="mt-2 mb-0 text-secondary">
-                      Giá sản phẩm <strong>đã bao gồm VAT</strong>.
                     </p>
                   </div>
                 </div>
@@ -406,6 +385,48 @@ export const DescriptionSection = ({ text }) => {
           {expanded ? "Thu gọn" : "Đọc tiếp"}
         </button>
       )}
+    </div>
+  );
+};
+const ThongSoSection = ({ thongso }) => {
+  if (!thongso) return null;
+
+  const rows = thongso
+    .split(/\r?\n/)
+    .map((line) => {
+      const index = line.indexOf(":");
+      if (index === -1) return null;
+      return {
+        label: line.slice(0, index).trim(),
+        value: line.slice(index + 1).trim(),
+      };
+    })
+    .filter(Boolean);
+
+  return (
+    <div className="mt-4 mb-3">
+      {/* TIÊU ĐỀ */}
+      <h5 className="fw-bold mb-4 position-relative thongso-title">
+        Thông số kỹ thuật
+      </h5>
+
+      {/* CARD */}
+      <div className="border-0 shadow-sm rounded-4">
+        <div className="card-body p-0">
+          <table className="table mb-0 align-middle">
+            <tbody>
+              {rows.map((row, i) => (
+                <tr key={i}>
+                  <td className="fw-semibold text-secondary w-35 px-4 py-3 bg-light">
+                    {row.label}
+                  </td>
+                  <td className="px-4 py-3 text-dark">{row.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

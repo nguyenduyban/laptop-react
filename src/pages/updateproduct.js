@@ -28,6 +28,7 @@ const AdminProductUpdate = () => {
   const [form, setForm] = useState({
     tensp: "",
     mota: "",
+    thongso: "",
     giamoi: "",
     giacu: "",
     trangthai: 1,
@@ -106,6 +107,7 @@ const AdminProductUpdate = () => {
     const fd = new FormData();
     fd.append("tensp", form.tensp);
     fd.append("mota", form.mota);
+    fd.append("thongso", form.thongso);
     fd.append("giamoi", form.giamoi);
     fd.append("giacu", form.giacu);
     fd.append("trangthai", form.trangthai);
@@ -280,7 +282,20 @@ const AdminProductUpdate = () => {
                     placeholder="Nhập mô tả chi tiết..."
                   />
                 </div>
-
+                {/* Thông số kỹ thuật */}
+                <div className="col-12">
+                  <label className="form-label fw-semibold d-flex align-items-center gap-1">
+                    <FaAlignLeft className="text-muted" /> Thông số kỹ thuật
+                  </label>
+                  <textarea
+                    className="form-control rounded-3 shadow-sm"
+                    name="thongso"
+                    rows="6"
+                    value={form.thongso}
+                    onChange={handleChange}
+                    placeholder="CPU: Intel Core i5..."
+                  />
+                </div>
                 {/* Ảnh đại diện */}
                 <div className="col-12">
                   <label className="form-label fw-semibold d-flex align-items-center gap-1">
