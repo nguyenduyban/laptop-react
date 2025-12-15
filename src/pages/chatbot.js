@@ -224,7 +224,7 @@ const Chatbot = () => {
                   className="border rounded p-3 mb-2 bg-white d-flex align-items-center shadow-sm hover-shadow"
                   style={{ cursor: "pointer", transition: "0.2s" }}
                   onClick={() =>
-                    window.open(`/san-pham/${product.masp}`, "_blank")
+                    window.open(`/product/${product.masp}`, "_blank")
                   }
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.boxShadow =
