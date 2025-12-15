@@ -36,7 +36,7 @@ const Aboutpage = () => {
             </p>
 
             <p className="text-secondary fs-5 mb-0">
-              Sự hài lòng của khách hàng chính là động lực giúp LaptopStore
+              Sự hài lòng của khách hàng chính là động lực giúp BTLaptop
               không ngừng phát triển và tạo giá trị tích cực cho cộng đồng.
             </p>
           </div>
