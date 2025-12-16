@@ -58,7 +58,7 @@ const Aboutpage = () => {
 
             {/* Founder Image */}
             <img
-              src="https://be-laravel.onrender.com/storage/img/gus.webp"
+              src="https://be-laravel.onrender.com/storage/img/gus.jpg"
               alt="Founder"
               className="img-fluid position-relative"
               style={{ zIndex: 2, maxHeight: "420px" }}
