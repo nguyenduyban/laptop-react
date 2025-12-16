@@ -13,7 +13,7 @@ const AdminAccountDetail = () => {
   const [account, setAccount] = useState(null);
   const [orders, setOrders] = useState([]);
   const [comments, setComments] = useState([]);
-
+  const [errors, setErrors] = useState({});
   // Form update state
   const [editData, setEditData] = useState({
     fullname: "",
@@ -26,6 +26,24 @@ const AdminAccountDetail = () => {
   useEffect(() => {
     loadData();
   }, [id]);
+
+  const validate = (name, value) => {
+    let error = "";
+
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!value) error = "Email không được để trống";
+      else if (!emailRegex.test(value)) error = "Email không hợp lệ";
+    }
+
+    if (name === "sdt") {
+      const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+      if (!value) error = "Số điện thoại không được để trống";
+      else if (!phoneRegex.test(value)) error = "Số điện thoại không hợp lệ";
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
 
   const loadData = async () => {
     try {
@@ -50,6 +68,10 @@ const AdminAccountDetail = () => {
   };
 
   const handleSave = async () => {
+    if (errors.email || errors.sdt) {
+      Swal.fire("Lỗi", "❌ Email hoặc Số điện thoại không hợp lệ", "error");
+      return;
+    }
     Swal.fire({
       title: "Xác nhận",
       text: "Bạn có chắc muốn cập nhật tài khoản?",
@@ -105,23 +127,33 @@ const AdminAccountDetail = () => {
             <div className="col-md-6 mb-3">
               <label>Email</label>
               <input
-                className="form-control"
+                type="email"
+                className={`form-control ${errors.email ? "is-invalid" : ""}`}
                 value={editData.email}
                 onChange={(e) =>
                   setEditData({ ...editData, email: e.target.value })
                 }
+                onBlur={(e) => validate("email", e.target.value)}
               />
+              {errors.email && (
+                <div className="invalid-feedback">{errors.email}</div>
+              )}
             </div>
 
             <div className="col-md-6 mb-3">
               <label>Số điện thoại</label>
               <input
-                className="form-control"
+                type="tel"
+                className={`form-control ${errors.sdt ? "is-invalid" : ""}`}
                 value={editData.sdt}
                 onChange={(e) =>
                   setEditData({ ...editData, sdt: e.target.value })
                 }
+                onBlur={(e) => validate("sdt", e.target.value)}
               />
+              {errors.sdt && (
+                <div className="invalid-feedback">{errors.sdt}</div>
+              )}
             </div>
 
             <div className="col-md-6 mb-3">
