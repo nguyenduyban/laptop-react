@@ -138,7 +138,7 @@ const AdminKho = () => {
                         >
                           {r.sanpham?.anhdaidien && (
                             <img
-                              src={`https://be-laravel.onrender.com/storage/img/${r.sanpham.anhdaidien}`}
+                              src={`http://127.0.0.1:8000/storage/img/${r.sanpham.anhdaidien}`}
                               alt={r.sanpham?.tensp}
                               style={{
                                 width: 50,

@@ -13,7 +13,6 @@ const Chatbot = () => {
   const [mode, setMode] = useState("bot");
   const messagesEndRef = useRef(null);
 
-  // TẠO ID ỔN ĐỊNH CHO KHÁCH VÃNG LAI
   const generateStableId = () => {
     let id = localStorage.getItem("stable_chat_id");
     if (!id) {
@@ -46,24 +45,19 @@ const Chatbot = () => {
       .catch(() => setMessages([]));
   }, [userId, mode]);
 
-  // SCROLL TỰ ĐỘNG
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // REALTIME: LẮNG NGHE TIN NHẮN MỚI
   useEffect(() => {
     if (!window.Echo || !userId) return;
 
-    const channelName = `private-chat.${userId}`;
-    const channel = window.Echo.private(channelName).listen(
-      "NewMessage",
+    const channel = window.Echo.private(`chat.user.${userId}`).listen(
+      ".NewMessage",
       (e) => {
+        console.log("Khách nhận tin realtime:", e);
         const msg = {
           ...e,
-          created_at: e.created_at
-            ? new Date(e.created_at).toISOString()
-            : null,
           user_name: e.is_admin
             ? mode === "bot"
               ? "Trợ lý"
@@ -76,8 +70,8 @@ const Chatbot = () => {
     );
 
     return () => {
-      channel.stopListening("NewMessage");
-      window.Echo.leave(channelName);
+      channel.stopListening(".NewMessage");
+      window.Echo.leave(`chat.user.${userId}`);
     };
   }, [userId, mode]);
 
@@ -99,9 +93,8 @@ const Chatbot = () => {
     setInput("");
 
     try {
-      let res;
       if (mode === "bot") {
-        res = await axios.post("https://be-laravel.onrender.com/api/chatbot", {
+        const res = await axios.post("https://be-laravel.onrender.com/api/chatbot", {
           message: trimmed,
           user_id: userId,
         });
@@ -120,15 +113,15 @@ const Chatbot = () => {
 
         setMessages((prev) => [...prev.filter((m) => !m.temp), botMsg]);
       } else {
-        res = await axios.post("https://be-laravel.onrender.com/api/send", {
+        // CHỈ GỬI API – KHÔNG THÊM TIN NHẮN VÀO STATE!
+        // ĐỂ PUSHER REALTIME LÀM VIỆC!
+        await axios.post("https://be-laravel.onrender.com/api/send", {
           message: trimmed,
           user_id: userId,
         });
 
-        setMessages((prev) => [
-          ...prev.filter((m) => !m.temp),
-          { ...res.data.message, user_name: userName },
-        ]);
+        // XÓA TIN TẠM → ĐỢI REALTIME THÊM TIN THẬT
+        setMessages((prev) => prev.filter((m) => !m.temp));
       }
     } catch (error) {
       console.error("Lỗi gửi:", error);
@@ -144,7 +137,6 @@ const Chatbot = () => {
       ]);
     }
   };
-
   // HIỂN THỊ TIN NHẮN + SẢN PHẨM
   const MessageItem = ({ msg }) => {
     const isFromUser = !msg.is_admin;

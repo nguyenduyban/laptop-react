@@ -17,7 +17,6 @@ const AdminDanhMuc = () => {
     tendanhmuc: "",
     mota: "",
     hinhanh: null,
-    trangthai: 1, // Mặc định hiển thị
   });
   const [editing, setEditing] = useState(null);
 
@@ -187,19 +186,6 @@ const AdminDanhMuc = () => {
               value={form.mota}
               onChange={(e) => setForm({ ...form, mota: e.target.value })}
             />
-          </div>
-
-          <div className="col-md-2">
-            <select
-              className="form-select rounded-pill"
-              value={form.trangthai}
-              onChange={(e) =>
-                setForm({ ...form, trangthai: Number(e.target.value) })
-              }
-            >
-              <option value={1}>Hiển thị</option>
-              <option value={0}>Ẩn</option>
-            </select>
           </div>
 
           <div className="col-md-2">

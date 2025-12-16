@@ -1,52 +1,90 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { register } from "../API/Auth"; // 🔹 Import API đăng ký
+import { register } from "../API/Auth";
 
 const Signinpage = () => {
   const [formData, setFormData] = useState({
     username: "",
-    email: "",
     password: "",
+    email: "",
     fullname: "",
     diachi: "",
     sdt: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  // ✅ Validate từng field
+  const validateField = (name, value) => {
+    let error = "";
+
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!value) error = "Email không được để trống";
+      else if (!emailRegex.test(value)) error = "Email không hợp lệ";
+    }
+
+    if (name === "sdt") {
+      const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+      if (!value) error = "Số điện thoại không được để trống";
+      else if (!phoneRegex.test(value)) error = "Số điện thoại không hợp lệ";
+    }
+
+    if (name === "password") {
+      if (!value) error = "Mật khẩu không được để trống";
+      else if (value.length < 6) error = "Mật khẩu tối thiểu 6 ký tự";
+    }
+
+    if (name === "username" && !value) {
+      error = "Username không được để trống";
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
+  // 🟢 Khi nhập
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
+
+  // 🟣 Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key]);
+    });
+
+    const hasError = Object.values(errors).some((err) => err);
+    if (hasError) return;
+
     setLoading(true);
     try {
-      await register({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        fullname: formData.fullname,
-        diachi: formData.diachi,
-        sdt: formData.sdt,
-      });
+      await register(formData);
       setMessage("✅ Đăng ký thành công! Vui lòng đăng nhập.");
       setFormData({
         username: "",
-        email: "",
         password: "",
-        diachi: "",
+        email: "",
         fullname: "",
+        diachi: "",
         sdt: "",
       });
+      setErrors({});
     } catch (err) {
       setMessage(err.message || "❌ Đăng ký thất bại!");
     } finally {
       setLoading(false);
+    }
+    if (errors.email || errors.sdt) {
+      setMessage("❌ Vui lòng nhập đúng thông tin");
+      return;
     }
   };
 
@@ -55,126 +93,94 @@ const Signinpage = () => {
       className="d-flex align-items-center justify-content-center vh-100"
       style={{ background: "linear-gradient(135deg, #007bff, #004085)" }}
     >
-      <div className="text-center w-100" style={{ maxWidth: "400px" }}>
-        {/* Icon */}
+      <div className="text-center w-100" style={{ maxWidth: "420px" }}>
         <div className="mb-4 text-white">
           <i className="bi bi-cart3 display-1"></i>
         </div>
 
-        {/* Card */}
         <div className="card shadow border-0 rounded-4 p-4">
           <div className="card-body">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               {/* Username */}
               <div className="mb-3">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">
-                    <i className="bi bi-person"></i>
-                  </span>
-                  <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    className="form-control border-start-0"
-                    placeholder="USERNAME"
-                    required
-                  />
-                </div>
+                <input
+                  type="text"
+                  name="username"
+                  className={`form-control ${
+                    errors.username ? "is-invalid" : ""
+                  }`}
+                  placeholder="USERNAME"
+                  value={formData.username}
+                  onChange={handleChange}
+                />
+                <div className="invalid-feedback">{errors.username}</div>
               </div>
 
               {/* Password */}
               <div className="mb-3">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">
-                    <i className="bi bi-lock"></i>
-                  </span>
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="form-control border-start-0"
-                    placeholder="PASSWORD"
-                    required
-                  />
-                </div>
+                <input
+                  type="password"
+                  name="password"
+                  className={`form-control ${
+                    errors.password ? "is-invalid" : ""
+                  }`}
+                  placeholder="PASSWORD"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <div className="invalid-feedback">{errors.password}</div>
               </div>
 
-              {/* ĐỊA CHỈ*/}
+              {/* Fullname */}
               <div className="mb-3">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">
-                    <i className="bi bi-lock-fill"></i>
-                  </span>
-                  <input
-                    type="text"
-                    name="diachi"
-                    value={formData.diachi}
-                    onChange={handleChange}
-                    className="form-control border-start-0"
-                    placeholder="ĐỊA CHỈ"
-                    required
-                  />
-                </div>
+                <input
+                  type="text"
+                  name="fullname"
+                  className="form-control"
+                  placeholder="FULL NAME"
+                  value={formData.fullname}
+                  onChange={handleChange}
+                />
               </div>
-              {/*sdt */}
+
+              {/* Địa chỉ */}
               <div className="mb-3">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">
-                    <i className="bi bi-lock-fill"></i>
-                  </span>
-                  <input
-                    type="text"
-                    name="sdt"
-                    value={formData.sdt}
-                    onChange={(e) => {
-                      const onlyNums = e.target.value.replace(/\D/g, "");
-                      setFormData({ ...formData, sdt: onlyNums });
-                    }}
-                    className="form-control border-start-0"
-                    placeholder="SỐ ĐIỆN THOẠI"
-                    maxLength={10}
-                    required
-                  />
-                </div>
+                <input
+                  type="text"
+                  name="diachi"
+                  className="form-control"
+                  placeholder="ĐỊA CHỈ"
+                  value={formData.diachi}
+                  onChange={handleChange}
+                />
               </div>
+
+              {/* SĐT */}
               <div className="mb-3">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">
-                    <i className="bi bi-lock-fill"></i>
-                  </span>
-                  <input
-                    type="text"
-                    name="fullname"
-                    value={formData.fullname}
-                    onChange={handleChange}
-                    className="form-control border-start-0"
-                    placeholder="FULL NAME"
-                    required
-                  />
-                </div>
+                <input
+                  type="text"
+                  name="sdt"
+                  className={`form-control ${errors.sdt ? "is-invalid" : ""}`}
+                  placeholder="SỐ ĐIỆN THOẠI"
+                  value={formData.sdt}
+                  onChange={handleChange}
+                />
+                <div className="invalid-feedback">{errors.sdt}</div>
               </div>
 
               {/* Email */}
               <div className="mb-3">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">
-                    <i className="bi bi-envelope"></i>
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="form-control border-start-0"
-                    placeholder="EMAIL"
-                    required
-                  />
-                </div>
+                <input
+                  type="email"
+                  name="email"
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  placeholder="EMAIL"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                <div className="invalid-feedback">{errors.email}</div>
               </div>
 
-              {/* Button */}
               <div className="d-grid mb-3">
                 <button
                   type="submit"
@@ -185,23 +191,16 @@ const Signinpage = () => {
                 </button>
               </div>
 
-              {/* Message */}
               {message && (
-                <div className="alert alert-info py-2" role="alert">
-                  {message}
-                </div>
+                <div className="alert alert-info py-2">{message}</div>
               )}
 
-              {/* Link đến login */}
-              <div>
-                <a
-                  href="/login"
-                  className="text-decoration-none small"
-                  style={{ color: "#0d6efd" }}
-                >
-                  Đã có tài khoản? Đăng nhập ngay
-                </a>
-              </div>
+              <a
+                href="/login"
+                className="text-decoration-none small text-primary"
+              >
+                Đã có tài khoản? Đăng nhập ngay
+              </a>
             </form>
           </div>
         </div>

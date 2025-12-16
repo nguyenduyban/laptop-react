@@ -18,7 +18,7 @@ const ProductPage = () => {
   const [originalProducts, setOriginalProducts] = useState([]);
 
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedBrands, setSelectedBrands] = useState([]); // 🔥 CHỌN NHIỀU HÃNG
+  const [selectedBrands, setSelectedBrands] = useState([]); //CHỌN NHIỀU HÃNG
   const [sortOption, setSortOption] = useState("popular");
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +64,7 @@ const ProductPage = () => {
     fetchData();
   }, []);
 
-  // 🔥 CHỌN NHIỀU HÃNG – Toggle
+  //  CHỌN NHIỀU HÃNG – Toggle
   const toggleBrand = (id) => {
     setSelectedBrands((prev) =>
       prev.includes(id) ? prev.filter((b) => b !== id) : [...prev, id]

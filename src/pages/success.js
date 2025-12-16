@@ -18,12 +18,10 @@ const SuccessPage = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Xóa giỏ khi vào trang này
   useEffect(() => {
     clearCart();
   }, []);
 
-  // ✅ Lấy dữ liệu đơn hàng
   useEffect(() => {
     if (!orderId) return;
 
@@ -54,15 +52,12 @@ const SuccessPage = () => {
   return (
     <div className="container my-5">
       <div className="bg-white shadow-sm rounded-4 p-4 border">
-        {/* ✅ Header */}
         <h2 className="text-success fw-bold text-center mb-1">
           Thanh toán thành công!
         </h2>
         <p className="text-center text-muted mb-4">Cảm ơn bạn đã đặt hàng.</p>
 
-        {/* ===================================== */}
-        {/* ✅ 1) THÔNG TIN ĐƠN HÀNG */}
-        {/* ===================================== */}
+ 
         <h4 className="fw-bold mb-3">Thông tin đơn hàng</h4>
         <div className="row mb-4">
           <div className="col-md-6">
@@ -102,9 +97,7 @@ const SuccessPage = () => {
           </div>
         </div>
 
-        {/* ===================================== */}
-        {/* ✅ 2) DANH SÁCH SẢN PHẨM */}
-        {/* ===================================== */}
+
         <h4 className="fw-bold mb-3">Sản phẩm đã mua</h4>
 
         <div className="table-responsive">
@@ -155,7 +148,6 @@ const SuccessPage = () => {
           </table>
         </div>
 
-        {/* ✅ Nút tiếp tục mua hàng */}
         <div className="text-center mt-4">
           <Link to="/" className="btn btn-primary px-4">
             Tiếp tục mua hàng

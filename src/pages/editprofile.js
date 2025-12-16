@@ -6,6 +6,9 @@ import { FaEdit, FaPlus, FaLock, FaLink } from "react-icons/fa";
 import { CgPassword } from "react-icons/cg";
 
 function AccountPage() {
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
+
   const { user, loginUser } = useAuth();
   const [formData, setFormData] = useState({
     fullname: user?.fullname || "",
@@ -13,15 +16,46 @@ function AccountPage() {
     sdt: user?.sdt || "",
     email: user?.email || "",
     diachi: user?.diachi || "",
-    
   });
+  const validate = (name, value) => {
+    let error = "";
 
+    if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!value) error = "Email không được để trống";
+      else if (!emailRegex.test(value)) error = "Email không hợp lệ";
+    }
+
+    if (name === "sdt") {
+      const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+      if (!value) error = "Số điện thoại không được để trống";
+      else if (!phoneRegex.test(value)) error = "Số điện thoại không hợp lệ";
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    validate(name, value);
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    validate("email", formData.email);
+    validate("sdt", formData.sdt);
+
+    if (errors.email || errors.sdt) {
+      Swal.fire("Lỗi", "❌ Vui lòng nhập đúng Email và Số điện thoại", "error");
+      return;
+    }
+
     try {
       const res = await updateProfile(formData);
       loginUser(res.user);
@@ -50,9 +84,10 @@ function AccountPage() {
               />
             </div>
             <div className="col-md-10">
-              <h5 className="fw-semibold mb-1">{user?.fullname || "Người dùng mới"}</h5>
+              <h5 className="fw-semibold mb-1">
+                {user?.fullname || "Người dùng mới"}
+              </h5>
               <p className="text-muted mb-2">{user?.email}</p>
-              
             </div>
           </div>
 
@@ -70,7 +105,7 @@ function AccountPage() {
                   onChange={handleChange}
                 />
               </div>
-               <div className="col-md-6">
+              <div className="col-md-6">
                 <label className="form-label fw-semibold">Password</label>
                 <input
                   type="password"
@@ -85,22 +120,32 @@ function AccountPage() {
                 <input
                   type="text"
                   name="sdt"
-                  className="form-control rounded-3"
+                  className={`form-control rounded-3 ${
+                    errors.sdt ? "is-invalid" : ""
+                  }`}
                   value={formData.sdt}
                   onChange={handleChange}
                 />
+                {errors.sdt && (
+                  <div className="invalid-feedback">{errors.sdt}</div>
+                )}
               </div>
               <div className="col-md-6">
                 <label className="form-label fw-semibold">Email</label>
                 <input
                   type="email"
                   name="email"
-                  className="form-control rounded-3"
+                  className={`form-control rounded-3 ${
+                    errors.email ? "is-invalid" : ""
+                  }`}
                   value={formData.email}
                   onChange={handleChange}
                 />
+                {errors.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
               </div>
-             
+
               <div className="col-12">
                 <label className="form-label fw-semibold">Địa chỉ</label>
                 <input
@@ -111,18 +156,15 @@ function AccountPage() {
                   onChange={handleChange}
                 />
               </div>
-               <div className="text-end mt-4">
-    <button type="submit" className="btn btn-primary">
-      <FaEdit className="me-2" /> Lưu thay đổi
-    </button>
-  </div>
+              <div className="text-end mt-4">
+                <button type="submit" className="btn btn-primary">
+                  <FaEdit className="me-2" /> Lưu thay đổi
+                </button>
+              </div>
             </div>
           </form>
         </div>
       </div>
-
-     
-     
     </div>
   );
 }

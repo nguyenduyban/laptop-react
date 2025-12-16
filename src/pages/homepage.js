@@ -56,7 +56,6 @@ const Homepage = () => {
           id="homepage-carousel"
           className="carousel slide rounded-4 overflow-hidden shadow-sm mb-5 border"
           data-bs-ride="carousel"
-          data-bs-interval="2000"
         >
           <div className="carousel-inner">
             {carousel.length > 0 ? (

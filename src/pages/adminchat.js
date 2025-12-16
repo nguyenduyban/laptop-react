@@ -132,68 +132,55 @@ const ChatAdmin = () => {
     setIsUserScrolling(!nearBottom);
   };
 
-  // REALTIME: LẮNG NGHE TIN NHẮN MỚI (PRIVATE CHANNEL)
   useEffect(() => {
     if (!selectedUser || !window.Echo) return;
 
-    const token = localStorage.getItem("token") || "";
-    const channelName = `private-chat.${selectedUser.id}`;
+    const channel = window.Echo.private(`chat.user.${selectedUser.id}`).listen(
+      ".NewMessage",
+      (e) => {
+        console.log("Admin nhận tin realtime:", e);
 
-    const channel = window.Echo.private(channelName)
-      .auth({
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      })
-      .listen("NewMessage", (e) => {
-        console.log("Tin nhắn mới (Admin):", e); // Debug
-
-        const msg = {
+        const newMsg = {
           ...e,
-          created_at: e.created_at
-            ? new Date(e.created_at).toISOString()
-            : null,
           user_name: e.is_admin
             ? "Hỗ trợ"
             : e.user_name || `Khách #${e.user_id}`,
         };
 
-        setMessages((prev) => [...prev, msg]);
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === e.id)) return prev;
+          return [...prev, newMsg];
+        });
 
-        // CẬP NHẬT DANH SÁCH KHÁCH NẾU LÀ TIN TỪ KHÁCH
-        if (!msg.is_admin) {
-          const timeStr = new Date(msg.created_at).toLocaleTimeString("vi-VN", {
+        // Cập nhật danh sách khách nếu là tin từ khách
+        if (!e.is_admin) {
+          const timeStr = new Date(e.created_at).toLocaleTimeString("vi-VN", {
             hour: "2-digit",
             minute: "2-digit",
           });
-
           setUsers((prev) => {
-            const exists = prev.some((u) => u.id === msg.user_id);
-            if (exists) {
-              return prev.map((u) =>
-                u.id === msg.user_id
-                  ? { ...u, last_message: msg.message, last_time: timeStr }
-                  : u
-              );
-            } else {
-              return [
-                {
-                  id: msg.user_id,
-                  name: msg.user_name || `Khách #${msg.user_id}`,
-                  last_message: msg.message,
-                  last_time: timeStr,
-                },
-                ...prev,
-              ];
+            const updated = prev.map((u) =>
+              u.id === e.user_id
+                ? { ...u, last_message: e.message, last_time: timeStr }
+                : u
+            );
+            if (!prev.some((u) => u.id === e.user_id)) {
+              updated.unshift({
+                id: e.user_id,
+                name: e.user_name || `Khách #${e.user_id}`,
+                last_message: e.message,
+                last_time: timeStr,
+              });
             }
+            return updated;
           });
         }
-      });
+      }
+    );
 
     return () => {
-      channel.stopListening("NewMessage");
-      window.Echo.leave(channelName);
+      channel?.stopListening(".NewMessage");
+      window.Echo.leave(`chat.user.${selectedUser.id}`);
     };
   }, [selectedUser]);
 
@@ -201,35 +188,33 @@ const ChatAdmin = () => {
   const handleSend = async () => {
     if (!input.trim() || !selectedUser) return;
 
+    const tempId = "temp_" + Date.now();
     const tempMsg = {
-      id: Date.now(),
+      id: tempId,
       user_id: selectedUser.id,
-      message: input,
+      message: input.trim(),
       temp: true,
       created_at: new Date().toISOString(),
       is_admin: true,
       user_name: "Hỗ trợ",
     };
+
     setMessages((prev) => [...prev, tempMsg]);
-    const text = input;
+    const text = input.trim();
     setInput("");
 
     try {
-      const res = await sendMessage({
+      await sendMessage({
         message: text,
         target_user_id: selectedUser.id,
       });
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.temp ? { ...res.data.message, user_name: "Hỗ trợ" } : m
-        )
-      );
+
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
     } catch (error) {
       console.error("Gửi lỗi:", error);
-      setMessages((prev) => prev.filter((m) => !m.temp));
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
     }
   };
-
   return (
     <div
       className="container-fluid d-flex flex-column"
@@ -307,8 +292,12 @@ const ChatAdmin = () => {
                     Chưa có tin nhắn
                   </div>
                 ) : (
-                  messages.map((msg, i) => (
-                    <MessageItem key={i} msg={msg} isAdmin={msg.is_admin} />
+                  messages.map((msg) => (
+                    <MessageItem
+                      key={msg.id}
+                      msg={msg}
+                      isAdmin={msg.is_admin}
+                    />
                   ))
                 )}
                 <div ref={messagesEndRef} />

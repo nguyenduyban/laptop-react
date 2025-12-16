@@ -10,13 +10,14 @@ const CartPage = () => {
   const { cart, setCart, removeFromCart, clearCart } = useCart();
   const [stock, setStock] = useState({}); // lưu tồn kho theo masp
 
-  // 🔥 Load tồn kho khi render giỏ hàng
   useEffect(() => {
     const fetchStock = async () => {
       const result = {};
       for (const item of cart) {
         try {
-          const res = await axios.get(`https://be-laravel.onrender.com/api/kho/sp/${item.masp}`);
+          const res = await axios.get(
+            `https://be-laravel.onrender.com/api/kho/sp/${item.masp}`
+          );
           result[item.masp] = res.data.soluong_ton ?? 0;
         } catch (e) {
           result[item.masp] = 0;
@@ -27,7 +28,6 @@ const CartPage = () => {
     fetchStock();
   }, [cart]);
 
-  // 🔥 tăng giảm số lượng nhưng không vượt tồn kho
   const updateQuantity = async (masp, delta) => {
     const item = cart.find((i) => i.masp === masp);
     if (!item) return;
@@ -46,7 +46,6 @@ const CartPage = () => {
     updateQuantityLocal(masp, newQty);
   };
 
-  // Thay đổi số lượng và lưu localStorage
   const updateQuantityLocal = (masp, quantity) => {
     const newCart = cart.map((item) =>
       item.masp === masp ? { ...item, quantity } : item
@@ -59,6 +58,10 @@ const CartPage = () => {
     const price = parsePrice(item.giamoi);
     const qty = item.quantity ?? 1;
     return sum + price * qty;
+  }, 0);
+
+  const totalQuantity = cart.reduce((sum, item) => {
+    return sum + (item.quantity ?? 1);
   }, 0);
 
   return (
@@ -151,7 +154,7 @@ const CartPage = () => {
               <hr />
               <div className="d-flex justify-content-between mb-2">
                 <span>Tổng sản phẩm:</span>
-                <strong>{cart.length}</strong>
+                <strong>{totalQuantity}</strong>
               </div>
               <div className="d-flex justify-content-between mb-3">
                 <span>Tạm tính:</span>

@@ -112,8 +112,8 @@ const ProductDetail = () => {
 
             {/* CAM KẾT */}
             <div className="product-commit-box mt-4">
-                {/* THÔNG SỐ KỸ THUẬT */}
-            <ThongSoSection thongso={product.thongso} />
+              {/* THÔNG SỐ KỸ THUẬT */}
+              <ThongSoSection thongso={product.thongso} />
               <h5 className="fw-bold mb-3 text-dark">Cam kết</h5>
               <div className="row g-3">
                 <div className="col-6">

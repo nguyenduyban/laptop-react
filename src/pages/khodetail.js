@@ -3,10 +3,8 @@ import Swal from "sweetalert2";
 import { getKhoDetailByProduct } from "../API/KhoDetail";
 import { useParams, useNavigate } from "react-router-dom";
 
-// Format số VN
 const numberVN = (n) => (Number(n) || 0).toLocaleString("vi-VN");
 
-// Format ngày dd/mm/yyyy
 const formatDate = (dateStr) => {
   if (!dateStr) return "-";
   const d = new Date(dateStr);

@@ -4,6 +4,7 @@ import { getAllNCC, createNCC, updateNCC, deleteNCC } from "../API/NhaCungCap";
 
 const AdminNhaCungCap = () => {
   const [list, setList] = useState([]);
+  const [errors, setErrors] = useState({});
   const [form, setForm] = useState({
     ten: "",
     email: "",
@@ -22,6 +23,33 @@ const AdminNhaCungCap = () => {
   useEffect(() => {
     loadData();
   }, []);
+  const validate = () => {
+    let newErrors = {};
+
+    // Tên
+    if (!form.ten.trim()) {
+      newErrors.ten = "Tên nhà cung cấp không được để trống";
+    }
+
+    // Email
+    if (form.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        newErrors.email = "Email không hợp lệ";
+      }
+    }
+
+    // SĐT
+    if (form.sdt) {
+      const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+      if (!phoneRegex.test(form.sdt)) {
+        newErrors.sdt = "Số điện thoại không hợp lệ";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Xử lý input
   const handleChange = (e) => {
@@ -31,6 +59,8 @@ const AdminNhaCungCap = () => {
   // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) return;
 
     try {
       if (editId) {
@@ -43,6 +73,7 @@ const AdminNhaCungCap = () => {
 
       setForm({ ten: "", email: "", sdt: "", dia_chi: "", ghi_chu: "" });
       setEditId(null);
+      setErrors({});
       loadData();
     } catch (err) {
       Swal.fire("Lỗi", "Không thể xử lý yêu cầu!", "error");
@@ -82,32 +113,36 @@ const AdminNhaCungCap = () => {
           <div className="col-md-6 mb-2">
             <label>Tên</label>
             <input
-              className="form-control"
+              className={`form-control ${errors.ten ? "is-invalid" : ""}`}
               name="ten"
               value={form.ten}
               onChange={handleChange}
-              required
             />
+            {errors.ten && <div className="invalid-feedback">{errors.ten}</div>}
           </div>
 
           <div className="col-md-6 mb-2">
             <label>Email</label>
             <input
-              className="form-control"
+              className={`form-control ${errors.email ? "is-invalid" : ""}`}
               name="email"
               value={form.email}
               onChange={handleChange}
             />
+            {errors.email && (
+              <div className="invalid-feedback">{errors.email}</div>
+            )}
           </div>
 
           <div className="col-md-6 mb-2">
             <label>Số điện thoại</label>
             <input
-              className="form-control"
+              className={`form-control ${errors.sdt ? "is-invalid" : ""}`}
               name="sdt"
               value={form.sdt}
               onChange={handleChange}
             />
+            {errors.sdt && <div className="invalid-feedback">{errors.sdt}</div>}
           </div>
 
           <div className="col-md-6 mb-2">

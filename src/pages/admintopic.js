@@ -122,20 +122,6 @@ const AdminTopic = () => {
             />
           </div>
 
-          {/* TRẠNG THÁI */}
-          <div className="col-md-3">
-            <select
-              className="form-select rounded-pill"
-              value={form.trangthai}
-              onChange={(e) =>
-                setForm({ ...form, trangthai: Number(e.target.value) })
-              }
-            >
-              <option value={1}>Hiển thị</option>
-              <option value={0}>Ẩn</option>
-            </select>
-          </div>
-
           {/* NÚT */}
           <div className="col-md-5 d-flex gap-2 align-items-start">
             <button
@@ -185,7 +171,7 @@ const AdminTopic = () => {
                 <tr>
                   <th>#</th>
                   <th>Tên chuyên mục</th>
-                  <th>Trạng thái</th>
+                  <th></th>
                   <th>Hành động</th>
                 </tr>
               </thead>
@@ -203,15 +189,7 @@ const AdminTopic = () => {
                       <td>{idx + 1}</td>
                       <td className="fw-semibold">{t.tenchuyenmuc}</td>
 
-                      <td>
-                        <span
-                          className={`badge bg-${
-                            t.trangthai === 1 ? "success" : "secondary"
-                          }`}
-                        >
-                          {t.trangthai === 1 ? "Hiển thị" : "Ẩn"}
-                        </span>
-                      </td>
+                      <td></td>
                       <td>
                         <button
                           className="btn btn-warning btn-sm me-2"

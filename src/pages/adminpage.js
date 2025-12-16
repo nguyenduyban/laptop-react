@@ -28,7 +28,6 @@ const Adminpage = () => {
 
   const [stats, setStats] = useState({
     revenue: 0,
-    products: 0,
     orders: 0,
     users: 0,
   });
@@ -122,7 +121,10 @@ const Adminpage = () => {
             bodyFont: { size: 13 },
             padding: 10,
             callbacks: {
-              label: (context) => context.raw.toLocaleString("vi-VN") + " đ",
+              label: (context) =>
+                Number(context.raw).toLocaleString("vi-VN", {
+                  maximumFractionDigits: 0,
+                }) + " đ",
             },
           },
         },
@@ -194,14 +196,8 @@ const Adminpage = () => {
                 {
                   icon: "fa-sack-dollar",
                   label: "Doanh thu",
-                  value: stats.revenue.toLocaleString("vi-VN") + "đ",
+                  value: Number(stats.revenue).toLocaleString("vi-VN"),
                   color: "success",
-                },
-                {
-                  icon: "fa-box",
-                  label: "Sản phẩm",
-                  value: stats.products,
-                  color: "primary",
                 },
                 {
                   icon: "fa-shopping-cart",
@@ -216,7 +212,7 @@ const Adminpage = () => {
                   color: "info",
                 },
               ].map((item, i) => (
-                <div className="col-lg-3 col-md-6" key={i}>
+                <div className="col-lg-3 col-md-6 " key={i}>
                   <div
                     className={`card border-0 shadow-sm h-100 bg-gradient text-white bg-${item.color}`}
                   >
@@ -335,8 +331,8 @@ const Adminpage = () => {
         <nav className="nav flex-column flex-grow-1">
           {[
             { id: "dashboard", icon: "fa-house", label: "Dashboard" },
-            { id: "taikhoan", icon: "fa-user", label: "Quản lý Tài Khoản" },
-            { id: "binhluan", icon: "fa-comments", label: "Quản lý Bình Luận" },
+            { id: "taikhoan", icon: "fa-user", label: "Quản lý Tài khoản" },
+            { id: "binhluan", icon: "fa-comments", label: "Quản lý bình luận" },
             { id: "hang", icon: "fa-building", label: "Quản lý Hãng" },
             { id: "chuyenmuc", icon: "fa-icons", label: "Quản lý Chuyên mục" },
             { id: "danhmuc", icon: "fa-folder", label: "Quản lý Danh mục" },
@@ -346,10 +342,14 @@ const Adminpage = () => {
               icon: "fa-cart-shopping",
               label: "Quản lý Đơn hàng",
             },
-            { id: "chat", icon: "fa-message", label: "Quản lý Chat" },
-            { id: "kho", icon: "fa-warehouse", label: "Quản lý Kho" },
+            { id: "chat", icon: "fa-message", label: "Quản lý chat" },
+            { id: "kho", icon: "fa-warehouse", label: "Quản lý kho" },
             { id: "carousel", icon: "fa-image", label: "Quản lý Banner" },
-            { id: "nhacungcap", icon: "fa-image", label: "Quản lý Nhà Cung Cấp" },
+            {
+              id: "nhacungcap",
+              icon: "fa-image",
+              label: "Quản lý Nhà Cung Cấp",
+            },
           ].map((tab) => (
             <button
               key={tab.id}

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useCart } from "../context/CartContext";
 import Swal from "sweetalert2";
 import { checkout, createVNPayPayment } from "../API/Checkout";
+import { getProfile } from "../API/Auth";
 
 const CheckoutPage = () => {
   const { cart, clearCart } = useCart();
@@ -18,6 +19,26 @@ const CheckoutPage = () => {
     note: "",
     payment: "cod",
   });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getProfile();
+
+        setForm((prev) => ({
+          ...prev,
+          email: user.email || "",
+          name: user.name || "",
+          phone: user.sdt || "",
+          address: user.diachi || "",
+        }));
+      } catch (err) {
+        console.log("Không thể lấy profile:", err.message);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -57,7 +78,7 @@ const CheckoutPage = () => {
       diachi:
         `${form.address}, ${form.ward}, ${form.district}, ${form.city}`.trim(),
       ghi_chu: form.note || null,
-      phuong_thuc_thanh_toan: form.payment, // ← BẮT BUỘC
+      phuong_thuc_thanh_toan: form.payment,
       giohang: cart.map((item) => ({
         sanpham_id: item.masp,
         so_luong: item.quantity ?? 1,
@@ -67,7 +88,7 @@ const CheckoutPage = () => {
     };
 
     try {
-      // VNPAY
+      // Thanh toán VNPAY
       if (form.payment === "vietqr") {
         const response = await createVNPayPayment(payload);
 
@@ -75,10 +96,11 @@ const CheckoutPage = () => {
           window.location.href = response.payment_url;
           return;
         }
+
         throw new Error("Không nhận được link thanh toán");
       }
 
-      // COD & CÁC PHƯƠNG THỨC KHÁC
+      // COD
       const res = await checkout(payload);
 
       if (res?.donhang_id) {
@@ -88,27 +110,9 @@ const CheckoutPage = () => {
       }
 
       throw new Error("Không nhận được mã đơn hàng");
-      // Reset form
-      setForm({
-        email: "",
-        name: "",
-        phone: "",
-        city: "",
-        district: "",
-        ward: "",
-        address: "",
-        note: "",
-        payment: "cod",
-      });
     } catch (err) {
       console.error("Checkout error:", err);
-      const message =
-        err.response?.data?.message ||
-        err.response?.data?.errors?.[0] ||
-        err.message ||
-        "Không thể đặt hàng";
-
-      Swal.fire("Lỗi", message, "error");
+      Swal.fire("Lỗi", err.message || "Không thể đặt hàng", "error");
     }
   };
 
@@ -199,6 +203,7 @@ const CheckoutPage = () => {
                   <option>Phường 1</option>
                   <option>Phường 2</option>
                   <option>Phường 3</option>
+                  
                 </select>
               </div>
 
@@ -228,13 +233,12 @@ const CheckoutPage = () => {
 
             <hr className="my-4" />
 
-            {/* PHƯƠNG THỨC THANH TOÁN */}
+            {/* PAYMENT */}
             <h5 className="fw-bold mb-3">Phương thức thanh toán</h5>
 
             {[
               { value: "cod", label: "COD (Thanh toán khi nhận hàng)" },
               { value: "vietqr", label: "Thanh toán VNPay" },
-              { value: "momo", label: "Thanh toán MOMO" },
             ].map((method) => (
               <div className="form-check mb-2" key={method.value}>
                 <input

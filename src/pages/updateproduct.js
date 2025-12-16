@@ -64,6 +64,7 @@ const AdminProductUpdate = () => {
         setForm({
           tensp: product.tensp || "",
           mota: product.mota || "",
+          thongso: product.thongso || "",
           giamoi: product.giamoi || "",
           giacu: product.giacu || "",
           trangthai: product.trangthai || 1,
