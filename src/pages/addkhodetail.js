@@ -16,7 +16,6 @@ const AddKhoDetail = () => {
 
   const [listNCC, setListNCC] = useState([]);
 
-  // 🔥 Load danh sách nhà cung cấp khi vào trang
   useEffect(() => {
     fetchNCC();
   }, []);
@@ -31,7 +30,6 @@ const AddKhoDetail = () => {
     }
   };
 
-  // ==================== SUBMIT ====================
   const handleSubmit = async () => {
     if (!soluong || !giaMua) {
       Swal.fire("Cảnh báo", "Vui lòng nhập đầy đủ thông tin", "warning");
@@ -56,8 +54,6 @@ const AddKhoDetail = () => {
     }
   };
 
-  // =================================================
-
   return (
     <div className="container py-5">
       <h3 className="fw-bold mb-3">Nhập kho chi tiết SP: {masp}</h3>
@@ -81,8 +77,6 @@ const AddKhoDetail = () => {
           onChange={(e) => setGiaMua(e.target.value)}
         />
       </div>
-
-
       <div className="mb-3">
         <label>Nhà cung cấp</label>
         <select
