@@ -247,7 +247,8 @@ const AddProduct = () => {
                 {/* Thông số */}
                 <div className="col-12">
                   <label className="form-label fw-semibold">
-                    <FaAlignLeft className="me-1 text-muted" /> Thông số kỹ thuật
+                    <FaAlignLeft className="me-1 text-muted" /> Thông số kỹ
+                    thuật
                   </label>
                   <textarea
                     className="form-control rounded-3"
@@ -258,6 +259,7 @@ const AddProduct = () => {
                     placeholder="CPU: Intel Core i5-13420H..."
                   />
                 </div>
+
                 {/* Ảnh đại diện */}
                 <div className="col-12">
                   <label className="form-label fw-semibold">
