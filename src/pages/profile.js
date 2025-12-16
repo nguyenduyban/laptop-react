@@ -67,7 +67,7 @@ const UserProfile = () => {
               src={
                 user.avatar
                   ? `https://be-laravel.onrender.com/storage/avatars/${user.avatar}`
-                  : "https://be-laravel.onrender.com/storage/img/account.png"
+                  : "https://cdn-icons-png.flaticon.com/512/760/760826.png"
               }
               alt="avatar"
               className="rounded-circle"
