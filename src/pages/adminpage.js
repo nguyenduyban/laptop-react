@@ -212,7 +212,7 @@ const Adminpage = () => {
                   color: "info",
                 },
               ].map((item, i) => (
-                <div className="col-lg-3 col-md-6 " key={i}>
+                <div className="col-lg-4 col-md-6 " key={i}>
                   <div
                     className={`card border-0 shadow-sm h-100 bg-gradient text-white bg-${item.color}`}
                   >
