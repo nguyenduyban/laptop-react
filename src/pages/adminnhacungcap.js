@@ -38,6 +38,9 @@ const AdminNhaCungCap = () => {
         newErrors.email = "Email không hợp lệ";
       }
     }
+    if (!form.email.trim()) {
+      newErrors.email = "Email nhà cung cấp không được để trống";
+    }
 
     // SĐT
     if (form.sdt) {
@@ -46,7 +49,13 @@ const AdminNhaCungCap = () => {
         newErrors.sdt = "Số điện thoại không hợp lệ";
       }
     }
-
+    if (!form.sdt.trim()) {
+      newErrors.sdt = "Số điện thoại nhà cung cấp không được để trống";
+    }
+    //dia chi
+    if (!form.dia_chi.trim()) {
+      newErrors.dia_chi = "Địa chỉ nhà cung cấp không được để trống";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
